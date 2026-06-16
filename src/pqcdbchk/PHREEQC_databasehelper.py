@@ -36,6 +36,34 @@ class DatabaseSearcher:
 
     # function to find the values
     def search(self, category, query, exact=False):
+        """
+        Search the selected PHREEQC database table for matching entries.
+
+        The query is applied to the selected category column using exact or
+        case-insensitive substring matching. Empty queries and invalid
+        categories return an empty DataFrame.
+
+        Parameters
+        ----------
+        category : str
+            The database category to search. Supported values are ``equation``,
+            ``species``, and ``phase``.
+        query : str
+            The search string entered by the user.
+        exact : bool, optional
+            If ``True``, perform an exact string match. If ``False``, perform
+            a case-insensitive substring search.
+
+        Returns
+        -------
+        pandas.DataFrame
+            The rows from the selected DataFrame that match the query.
+
+        Notes
+        -----
+        The method normalizes equation queries by removing spaces before
+        matching and converts values to strings before comparison.
+        """
         if not query: return pd.DataFrame()
         
         if category == "equation":
@@ -153,6 +181,28 @@ class SearchPageBase(tk.Frame):
             
     # function for exporting the result into an excel file
     def export_to_excel(self):
+        """
+        Export the current search results or selected treeview rows to an Excel file.
+
+        If the user has selected rows in the treeview, only those rows are
+        exported. If no rows are selected, the method prompts to export all
+        search results when available. If there are no search results, it
+        displays a warning.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+
+        Notes
+        -----
+        The exported file is saved using a save dialog and written with
+        pandas.DataFrame.to_excel. The method uses the stored ``result_df``
+        DataFrame as the fallback when no treeview rows are selected.
+        """
         selected_items = self.tree.selection()
         if not selected_items:
             if hasattr(self, 'result_df') and not self.result_df.empty:
@@ -334,6 +384,21 @@ class EditDatabasePage(tk.Frame):
 
     # find database file
     def browse_file(self, entry):
+        """
+        Prompt the user to select a database file and populate an entry widget.
+
+        Opens a file dialog filtered for database files and updates the given
+        entry widget with the selected file path.
+
+        Parameters
+        ----------
+        entry : tkinter.Entry
+            The entry widget to populate with the chosen file path.
+
+        Returns
+        -------
+        None
+        """
         filename = fd.askopenfilename(
             filetypes=[("Database files", "*.dat"), ("All files", "*.*")]
         )
@@ -343,6 +408,32 @@ class EditDatabasePage(tk.Frame):
 
     # insert the added values into the section
     def insert_into_section(self, lines, section_name, new_entry):
+        """
+        Insert a block of text into the specified database section.
+
+        Locates the named section header in the database file content and inserts
+        the provided entry lines before the next section header or end of file.
+        Ensures that the inserted lines are newline-terminated.
+
+        Parameters
+        ----------
+        lines : list[str]
+            The lines comprising the database file.
+        section_name : str
+            The name of the section to insert into, e.g. ``SOLUTION_SPECIES``.
+        new_entry : str
+            The text block to insert into the section.
+
+        Returns
+        -------
+        list[str]
+            The modified list of file lines containing the inserted block.
+
+        Raises
+        ------
+        ValueError
+            If the specified section header is not found in the file content.
+        """
         start = None
         pattern = re.compile(rf'^\s*{re.escape(section_name)}\s*$', re.IGNORECASE)
         for i, line in enumerate(lines):
@@ -409,6 +500,28 @@ class EditDatabasePage(tk.Frame):
 
     # add user input values to species
     def add_species(self):
+        """
+        Add or update a species entry in the PHREEQC database.
+
+        Reads species data from GUI entry widgets, validates required fields,
+        loads the selected database file, and inserts or replaces the species
+        block in the SOLUTION_SPECIES section. If a duplicate species entry is
+        found, prompts the user before editing.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+
+        Notes
+        -----
+        This method modifies the database file by writing a new or updated
+        SOLUTION_SPECIES block to the provided output path. It also relies on
+        GUI dialogs to report validation errors and duplicate handling.
+        """
         eq = self.normalize_equation(self.entry_eq.get().strip())
         logk = self.entry_logk.get().strip()
         dh = self.entry_dh.get().strip()
@@ -463,6 +576,27 @@ class EditDatabasePage(tk.Frame):
 
     # add user input values to solution master species
     def add_master_species(self):
+        """
+        Add or update a solution master species entry in the PHREEQC database.
+
+        Reads solution master species values from GUI entry widgets, validates
+        that all required fields are provided, loads the selected database file,
+        and writes the entry to the SOLUTION_MASTER_SPECIES section. If the
+        element already exists, the user is prompted before updating.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+
+        Notes
+        -----
+        The method writes the new line directly into the database file and
+        uses GUI dialogs to report missing input or duplicate handling.
+        """
         element = self.entry_sms_element.get().strip()
         species = self.entry_sms_species.get().strip()
         alk = self.entry_sms_alk.get().strip()
@@ -505,6 +639,27 @@ class EditDatabasePage(tk.Frame):
     
     # add user input to phase block 
     def add_phase(self):
+        """
+        Add or update a phase entry in the PHREEQC database.
+
+        Reads phase data from GUI entry widgets, validates required fields,
+        loads the selected database file, and inserts or replaces the phase block
+        in the PHASES section. If a duplicate phase name is found, prompts the
+        user before editing the existing entry.
+
+        Parameters
+        ----------
+        None
+
+        Returns
+        -------
+        None
+
+        Notes
+        -----
+        The method writes a new or updated phase block to the output file path
+        and uses GUI dialogs for validation warnings and duplicate handling.
+        """
         name = self.entry_phase_name.get().strip()
         eq = self.normalize_equation(self.entry_phase_eq.get().strip())
         logk = self.entry_phase_logk.get().strip()
