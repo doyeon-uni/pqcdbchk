@@ -7,12 +7,12 @@ from tkinter import ttk
 from tkinter import filedialog as fd
 from tkinter import messagebox
 from tkinter.messagebox import showinfo
-from .build_database import clean_tables as ct
-from .build_database import utils as ut
+import build_database.clean_tables as ct
+import build_database.utils as ut
 import importlib.resources as pkg_resources
 
 # get databases folder from build_database
-database_list = pkg_resources.files('pqcdbchk.build_database.databases')
+database_list = pkg_resources.files('build_database.databases')
 database_list = ut.phreeqc_database_list(database_list)
 
 # create and normalize Solution Species table
