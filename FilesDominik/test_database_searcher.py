@@ -1,6 +1,6 @@
 import pandas as pd
 
-from src.PyPGDBE.PHREEQC_databasehelper import DatabaseSearcher
+from src.pqcdbchk.PHREEQC_databasehelper import DatabaseSearcher
 
 
 def make_searcher() -> DatabaseSearcher:
