@@ -14,7 +14,7 @@ import importlib.resources as pkg_resources
 #this is a test for Doeon made on 260515 at 2.35 pm
 
 # get databases folder from build_database
-database_list = pkg_resources.files('PyPGDBE.build_database.databases')
+database_list = pkg_resources.files('pqcdbchk.build_database.databases')
 database_list = ut.phreeqc_database_list(database_list)
 
 # create and normalize Solution Species table
