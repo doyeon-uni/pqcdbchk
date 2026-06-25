@@ -78,7 +78,7 @@ class DatabaseSearcher:
         if exact:
             return df[df[col].astype(str) == query]
         else:
-            return df[df[col].astype(str).str.contains(query, case=False, na=False)]
+            return df[df[col].astype(str).str.contains(query, case=False, na=False, regex=False)]
 
 # Sort the results numerically and alphabetically
 def treeview_sort_column(tree, col, reverse):
@@ -243,7 +243,7 @@ class FindValuesPage(tk.Frame):
     def __init__(self, master):
         super().__init__(master)
         tk.Label(self, text="Find Values", font=("DejaVu Sans Mono", 20, "bold")).pack(pady=20)
-        for text, page in [("Find Equation", FindEquationsPage), ("Find Species", FindSpeciesPage), ("Find Phase", FindPhasesPage)]:
+        for text, page in [("Find Species Equation", FindEquationsPage), ("Find Master Species", FindSpeciesPage), ("Find Phase", FindPhasesPage)]:
             tk.Button(self, text=text, width=20, command=lambda p=page: master.show_frame(p)).pack(pady=5)
         tk.Button(self, text="Back", command=lambda: master.show_frame(Main)).pack(pady=20)
 
