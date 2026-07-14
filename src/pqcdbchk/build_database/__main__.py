@@ -5,8 +5,8 @@ import os
 import argparse
 import importlib.resources as pkg_resources
 import pandas as pd
-import build_database.clean_tables as ct
-from build_database import utils
+from . import clean_tables as ct
+from . import utils
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 def main(verbose=False):
     """Main function to compile the master database. """
-    data_b = pkg_resources.files('build_database').joinpath('databases')
+    data_b = pkg_resources.files('pqcdbchk.build_database.databases')
     data_b = utils.phreeqc_database_list(data_b)
     rank = {
         '#llnl.dat': 1,

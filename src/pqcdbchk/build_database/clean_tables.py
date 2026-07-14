@@ -397,7 +397,7 @@ def main(function, format, analysis, output):
     Example usage:
     python script.py --function master_solution --databases db1 db2 --output output.csv --format csv
     """
-    data_b = pkg_resources.files('build_database').joinpath('databases')
+    data_b = pkg_resources.files('pqcdbchk.build_database.databases')
     data_b = utils.phreeqc_database_list(data_b)
     if function == "master_solution":
         df = compile_master_solution_table(
