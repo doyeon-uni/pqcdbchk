@@ -65,7 +65,9 @@ def test_add_species_edits_existing_duplicate(edit_page, tmp_path):
 
 def test_add_master_species_appends_new_element(edit_page, tmp_path):
     db_path = tmp_path / "db.dat"
-    db_path.write_text("SOLUTION_MASTER_SPECIES\nCa      Ca+2    0.0     40.08\n\nPHASES\n")
+    db_path.write_text(
+        "SOLUTION_MASTER_SPECIES\nCa      Ca+2    0.0     40.08\n\nPHASES\n"
+    )
     new_path = tmp_path / "out.dat"
 
     _set(edit_page.entry_db, str(db_path))
@@ -83,7 +85,9 @@ def test_add_master_species_appends_new_element(edit_page, tmp_path):
 
 def test_add_phase_appends_new_phase(edit_page, tmp_path):
     db_path = tmp_path / "db.dat"
-    db_path.write_text("PHASES\nCalcite\n    CaCO3 = Ca+2 + CO3-2\n    log_k -8.48\n\nEXCHANGE\n")
+    db_path.write_text(
+        "PHASES\nCalcite\n    CaCO3 = Ca+2 + CO3-2\n    log_k -8.48\n\nEXCHANGE\n"
+    )
     new_path = tmp_path / "out.dat"
 
     _set(edit_page.entry_db, str(db_path))

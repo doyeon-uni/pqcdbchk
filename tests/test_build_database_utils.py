@@ -8,9 +8,7 @@ def test_phreeqc_database_list_returns_all_dat_files(tmp_path):
 
     result = phreeqc_database_list(tmp_path)
 
-    assert sorted(result) == sorted(
-        [str(tmp_path / "a.dat"), str(tmp_path / "b.dat")]
-    )
+    assert sorted(result) == sorted([str(tmp_path / "a.dat"), str(tmp_path / "b.dat")])
 
 
 def test_phreeqc_database_list_excludes_ignored_files(tmp_path):

@@ -1,4 +1,5 @@
 """Parses phreeqc .dat files and returns pandas dataframes"""
+
 import re
 import os
 import click
@@ -119,6 +120,7 @@ class BaseParser:
 
 class SolutionParser(BaseParser):
     """Class for parsing solution species in phreeqc database files"""
+
     def __init__(self, database_file_path) -> None:
         """
         Initialize the SolutionParser class.
@@ -271,7 +273,7 @@ class MasterSolutionParser:
         data_frame["source"] = self.source
         self.data_frame = data_frame
 
-    def __add__(self, other: 'MasterSolutionParser') -> 'MasterSolutionParser':
+    def __add__(self, other: "MasterSolutionParser") -> "MasterSolutionParser":
         """
         Combine the data from this parser with another MasterSolutionParser instance.
 
@@ -305,7 +307,7 @@ def text_selection(text_file, start_block, end_block) -> list:
             if line.strip() == start_block:
                 read = True
                 continue
-            if (end_block in line.strip() or 'END' in line.strip()) and read:
+            if (end_block in line.strip() or "END" in line.strip()) and read:
                 read = False
                 break
             if read:
@@ -328,12 +330,26 @@ def file_name(file_path: str) -> str:
 
 
 @click.command()
-@click.argument('database_file', type=click.Path(exists=True))
-@click.option('--solution_csv', default='solution_data.csv', help='Filename for solution data CSV')
-@click.option('--master_solution_csv', default='master_solution_data.csv', help='Filename for master solution data CSV')
-@click.option('--save_solution', is_flag=True, help='Save solution data CSV')
-@click.option('--save_master_solution', is_flag=True, help='Save master solution data CSV')
-def parse_phreeqc(database_file, solution_csv, master_solution_csv, save_solution, save_master_solution):
+@click.argument("database_file", type=click.Path(exists=True))
+@click.option(
+    "--solution_csv", default="solution_data.csv", help="Filename for solution data CSV"
+)
+@click.option(
+    "--master_solution_csv",
+    default="master_solution_data.csv",
+    help="Filename for master solution data CSV",
+)
+@click.option("--save_solution", is_flag=True, help="Save solution data CSV")
+@click.option(
+    "--save_master_solution", is_flag=True, help="Save master solution data CSV"
+)
+def parse_phreeqc(
+    database_file,
+    solution_csv,
+    master_solution_csv,
+    save_solution,
+    save_master_solution,
+):
     """
     Parses a PHREEQC database file and outputs data as CSVs.
 
@@ -358,5 +374,5 @@ def parse_phreeqc(database_file, solution_csv, master_solution_csv, save_solutio
         click.echo(f"Master solution data saved to {master_solution_csv}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     parse_phreeqc()

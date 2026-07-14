@@ -6,7 +6,11 @@ from pqcdbchk.PHREEQC_databasehelper import DatabaseSearcher
 def make_searcher() -> DatabaseSearcher:
     solution_species = pd.DataFrame(
         {
-            "equation": ["La+3+H2O=LaOH+2+H+", "YbF2+ = Yb+3 + 2F-", "Ca+2+CO3-2=CaCO3"],
+            "equation": [
+                "La+3+H2O=LaOH+2+H+",
+                "YbF2+ = Yb+3 + 2F-",
+                "Ca+2+CO3-2=CaCO3",
+            ],
             "log_k": [1.0, 2.0, 3.0],
         }
     )
