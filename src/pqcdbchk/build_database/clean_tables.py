@@ -98,8 +98,7 @@ def compile_solution_species_table(list_of_databases: list) -> pd.DataFrame:
     return result
 
 
-# This function is not implemented yet, skip in testing
-def compile_phase_table(list_of_databases: list) -> pd.DataFrame:  # pragma: no cover
+def compile_phase_table(list_of_databases: list) -> pd.DataFrame:
     """
     Compile phase table from a list of databases.
 
@@ -135,12 +134,10 @@ def compile_phase_table(list_of_databases: list) -> pd.DataFrame:  # pragma: no 
     if "v_m" in result.columns:
         result["v_m"] = result["v_m"].apply(lambda x: clean_tuple(x, "vm"))
 
-    # breakup tc column
+    # breakup tc column into t_c, p_c, and omega (expand_tc already
+    # returns plain floats/NaN, so no further tuple_to_float conversion
+    # is needed here)
     result = result.apply(expand_tc, axis=1)
-
-    tupe_to_float_columns = ["t_c", "p_c", "omega"]
-    for column in tupe_to_float_columns:
-        result[column] = result[column].apply(tuple_to_float)
 
     # remove 1.0000 from equations
     result["dissolution_reaction"] = remove_ones(result["dissolution_reaction"])
@@ -304,14 +301,12 @@ def expand_tc(row: pd.Series) -> pd.Series:
     return row
 
 
-# function is only used in compile_phase_table, which is not implemented yet, skip in testing
-def tuple_to_string(tup: tuple) -> str:  # pragma: no cover
+def tuple_to_string(tup: tuple) -> str:
     """Converts a tuple to a string by joining all elements with a space"""
     return " ".join(tup)
 
 
-# function is only used in compile_phase_table, which is not implemented yet, skip in testing
-def tuple_to_float(tup: tuple) -> Optional[float]:  # pragma: no cover
+def tuple_to_float(tup: tuple) -> Optional[float]:
     """Converts a tuple to a float by taking the first element"""
     if tup and not isinstance(tup, float):
         try:
@@ -322,8 +317,7 @@ def tuple_to_float(tup: tuple) -> Optional[float]:  # pragma: no cover
     return None
 
 
-# function is only used in compile_phase_table, which is not implemented yet, skip in testing
-def expand_logk(row: pd.Series) -> pd.Series:  # pragma: no cover
+def expand_logk(row: pd.Series) -> pd.Series:
     """
     Expand the log_k value in the given row.
 
@@ -397,7 +391,7 @@ def main(function, format, analysis, output):
     Example usage:
     python script.py --function master_solution --databases db1 db2 --output output.csv --format csv
     """
-    data_b = pkg_resources.files('build_database').joinpath('databases')
+    data_b = pkg_resources.files('pqcdbchk.build_database.databases')
     data_b = utils.phreeqc_database_list(data_b)
     if function == "master_solution":
         df = compile_master_solution_table(
