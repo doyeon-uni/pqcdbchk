@@ -1,4 +1,5 @@
 """Uses Solution and Master Solution parsers to compile tables from multiple databases"""
+
 import re
 import click
 from typing import Optional, Tuple, Literal
@@ -68,7 +69,9 @@ def compile_solution_species_table(list_of_databases: list) -> pd.DataFrame:
     result["log_k"] = result["log_k"].apply(log_k_to_float)
 
     # convert llnl_gamma to float
-    result["llnl_gamma"] = result["llnl_gamma"].apply(lambda x: float(x[0]) if x else None)
+    result["llnl_gamma"] = result["llnl_gamma"].apply(
+        lambda x: float(x[0]) if x else None
+    )
 
     # remove 1.0000 from equations
     result["equation"] = remove_ones(result["equation"])
@@ -391,12 +394,10 @@ def main(function, format, analysis, output):
     Example usage:
     python script.py --function master_solution --databases db1 db2 --output output.csv --format csv
     """
-    data_b = pkg_resources.files('pqcdbchk.build_database.databases')
+    data_b = pkg_resources.files("pqcdbchk.build_database.databases")
     data_b = utils.phreeqc_database_list(data_b)
     if function == "master_solution":
-        df = compile_master_solution_table(
-            list_of_databases=data_b, analysis=analysis
-        )
+        df = compile_master_solution_table(list_of_databases=data_b, analysis=analysis)
     elif function == "solution_species":
         df = compile_solution_species_table(list_of_databases=data_b)
 

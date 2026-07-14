@@ -28,8 +28,8 @@ def compile_and_rank_mst(db_list: str, rank: dict) -> pd.DataFrame:
     The resulting table is then sorted by the 'priority' column.
     """
     mst = ct.compile_master_solution_table(db_list)
-    mst['priority'] = mst['source'].apply(lambda x: rank[x] if x in rank else 5)
-    return mst.sort_values(by=['priority'])
+    mst["priority"] = mst["source"].apply(lambda x: rank[x] if x in rank else 5)
+    return mst.sort_values(by=["priority"])
 
 
 def add_hash_to_source(source: str) -> str:
@@ -43,9 +43,9 @@ def add_hash_to_source(source: str) -> str:
     str: The modified source string with a hash symbol added.
 
     """
-    if source[0] == '#':
+    if source[0] == "#":
         return source
-    return '#' + source
+    return "#" + source
 
 
 def remove_hash_from_source(source: str) -> str:
@@ -59,12 +59,14 @@ def remove_hash_from_source(source: str) -> str:
     str: The source string without the hash symbol at the beginning.
 
     """
-    if source[0] == '#':
+    if source[0] == "#":
         return source[1:]
     return source
 
 
-def get_missing_species(mst: pd.DataFrame, result_mst: pd.DataFrame, add: str = '#minteq.v4.dat') -> pd.DataFrame:
+def get_missing_species(
+    mst: pd.DataFrame, result_mst: pd.DataFrame, add: str = "#minteq.v4.dat"
+) -> pd.DataFrame:
     """
     Get the missing species from the master database.
 
@@ -77,8 +79,8 @@ def get_missing_species(mst: pd.DataFrame, result_mst: pd.DataFrame, add: str = 
         pd.DataFrame: The missing species from the master database.
     """
     add = add_hash_to_source(add)
-    temp = mst[mst['source'] == add]
-    missing = ~temp['element'].isin(result_mst['element'])
+    temp = mst[mst["source"] == add]
+    missing = ~temp["element"].isin(result_mst["element"])
     return temp[missing]
 
 
@@ -96,12 +98,14 @@ def process_missing_species(missing_species: pd.DataFrame) -> pd.DataFrame:
     pandas.DataFrame
         DataFrame with rows removed where species is in TO_DROP.
     """
-    to_drop = ['Hg', 'Sb(OH)6-']
-    missing_species = missing_species[~missing_species['species'].isin(to_drop)]
+    to_drop = ["Hg", "Sb(OH)6-"]
+    missing_species = missing_species[~missing_species["species"].isin(to_drop)]
     return missing_species
 
 
-def find_and_collect_matches(series: pd.Series, entry: str, all_match_indexes: list) -> None:
+def find_and_collect_matches(
+    series: pd.Series, entry: str, all_match_indexes: list
+) -> None:
     """
     Find and collect matches in a series based on a given entry.
 
@@ -128,8 +132,8 @@ def find_and_collect_matches(series: pd.Series, entry: str, all_match_indexes: l
     - The function searches for matches in the series based on the entry.
     - The match indexes are collected in the all_match_indexes list.
     """
-    if entry == 'Sb(OH)6-':
-        logging.warning('Unexpected species Sb(OH)6- found')
+    if entry == "Sb(OH)6-":
+        logging.warning("Unexpected species Sb(OH)6- found")
     match_indexes = series[series.str.contains(entry, regex=False)].index.tolist()
     if match_indexes:
         all_match_indexes.extend(match_indexes)
@@ -152,17 +156,19 @@ def reorder_file_list(file_list: str, rank_dict: dict) -> list:
     >>> reorder_file_list(file_list, rank_dict)
     ['#file2.txt', '#file3.txt', '#file1.txt']
     """
-    filenames = [path.split('/')[-1] for path in file_list]
-    ranked_files = [file for file in filenames if f'#{file}' in rank_dict]
-    unranked_files = [file for file in filenames if f'#{file}' not in rank_dict]
-    ranked_files.sort(key=lambda x: rank_dict[f'#{x}'])
+    filenames = [path.split("/")[-1] for path in file_list]
+    ranked_files = [file for file in filenames if f"#{file}" in rank_dict]
+    unranked_files = [file for file in filenames if f"#{file}" not in rank_dict]
+    ranked_files.sort(key=lambda x: rank_dict[f"#{x}"])
     sorted_filenames = ranked_files + unranked_files
-    sorted_file_paths = [f'#{filename}' for filename in sorted_filenames]
+    sorted_file_paths = [f"#{filename}" for filename in sorted_filenames]
 
     return sorted_file_paths
 
 
-def save_master_database(output_file=None, result_mst: pd.DataFrame = None, result_sp: pd.DataFrame = None) -> str:
+def save_master_database(
+    output_file=None, result_mst: pd.DataFrame = None, result_sp: pd.DataFrame = None
+) -> str:
     """
     Save the master database to a file or return the file content as a string.
 
@@ -190,11 +196,14 @@ def save_master_database(output_file=None, result_mst: pd.DataFrame = None, resu
         raise ValueError("At least one of result_mst or result_sp must be provided.")
 
     if result_mst is None or result_sp is None:
-        warnings.warn("Either solution master species or solution species is missing.", UserWarning)
+        warnings.warn(
+            "Either solution master species or solution species is missing.",
+            UserWarning,
+        )
 
     with io.StringIO() as file:
         file.write(blocks.NAMED_EXPRESSIONS)
-        file.write("\n"+blocks.LLNL_AQUEOUS_MODEL_PARAMETERS+"\n")
+        file.write("\n" + blocks.LLNL_AQUEOUS_MODEL_PARAMETERS + "\n")
 
         if result_mst is not None:
             file.write(
@@ -210,7 +219,7 @@ def save_master_database(output_file=None, result_mst: pd.DataFrame = None, resu
         file_content = file.getvalue()
 
     if output_file:
-        with open(output_file, 'w', encoding='utf-8') as f:
+        with open(output_file, "w", encoding="utf-8") as f:
             f.write(file_content)
 
     else:
