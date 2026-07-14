@@ -11,23 +11,32 @@ from .build_database import clean_tables as ct
 from .build_database import utils as ut
 import importlib.resources as pkg_resources
 
-#this is a test for Doeon made on 260515 at 2.35 pm
+def load_tables():
+    """
+    Load and compile the Solution Species, Solution Master Species, and
+    Phases tables from the bundled PHREEQC databases.
 
-# get databases folder from build_database
-database_list = pkg_resources.files('pqcdbchk.build_database.databases')
-database_list = ut.phreeqc_database_list(database_list)
+    Returns
+    -------
+    tuple[pandas.DataFrame, pandas.DataFrame, pandas.DataFrame]
+        The solution_species, sms, and phase tables.
+    """
+    database_list = pkg_resources.files('pqcdbchk.build_database.databases')
+    database_list = ut.phreeqc_database_list(database_list)
 
-# create and normalize Solution Species table
-solution_species = ct.compile_solution_species_table(database_list)
-solution_species.iloc[:, 0] = solution_species.iloc[:, 0].str.replace(' ', '')
-ones = re.compile(r'\b1(?!\d)')
-solution_species.iloc[:, 0] = solution_species.iloc[:, 0].str.replace(ones, '', regex=True)
+    # create and normalize Solution Species table
+    solution_species = ct.compile_solution_species_table(database_list)
+    solution_species.iloc[:, 0] = solution_species.iloc[:, 0].str.replace(' ', '')
+    ones = re.compile(r'\b1(?!\d)')
+    solution_species.iloc[:, 0] = solution_species.iloc[:, 0].str.replace(ones, '', regex=True)
 
-# create Solution Master Species table
-sms = ct.compile_master_solution_table(database_list, analysis=True)
+    # create Solution Master Species table
+    sms = ct.compile_master_solution_table(database_list, analysis=True)
 
-# create phases table
-phase = ct.compile_phase_table(database_list)
+    # create phases table
+    phase = ct.compile_phase_table(database_list)
+
+    return solution_species, sms, phase
 
 # Class for searching values
 class DatabaseSearcher:
@@ -553,7 +562,7 @@ class EditDatabasePage(tk.Frame):
 
 # main app
 class App(tk.Tk):
-    def __init__(self):
+    def __init__(self, solution_species=None, sms=None, phase=None):
         super().__init__()
         self.title("PHREEQC Database Helper")
         self.geometry("1000x750")
@@ -561,6 +570,9 @@ class App(tk.Tk):
         # enables scrolling even when the window size is small
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
+
+        if solution_species is None or sms is None or phase is None:
+            solution_species, sms, phase = load_tables()
 
         self.searcher = DatabaseSearcher(solution_species, sms, phase)
         self.frames = {}
