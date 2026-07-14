@@ -1,7 +1,7 @@
 [project]
-name = "pqcdbchk"
+name = "urop2025"
 version = "0.1.0"
-description = "A Jupyter notebook and Python-based tool for exporting, searching, and editing PHREEQC databases"
+description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
@@ -10,11 +10,8 @@ dependencies = [
     "numpy>=2.4.4",
     "openpyxl>=3.1.5",
     "pandas>=3.0.2",
+    "pytest>=9.0.3",
     "seaborn>=0.13.2",
 ]
-
-[dependency-groups]
-dev = [
-    "ipykernel>=7.3.0",
-    "pytest-cov>=7.1.0",
-]
+[tool.pytest.ini_options]
+pythonpath = ["src"]
