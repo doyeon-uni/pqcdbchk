@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import pytest
 
-from src.PyPGDBE.utils import (
+from pqcdbchk.utils import (
     alk_gfw_duplicates,
     equation_duplicates,
     plot_source_hist,
