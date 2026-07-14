@@ -218,11 +218,13 @@ def save_master_database(output_file=None, result_mst: pd.DataFrame = None, resu
 
 
 def phreeqc_database_list(database_directory: str, ignore=None) -> list:
-    """Returns a list of phreeqc database file paths"""
+    """Returns a list of phreeqc database file paths, excluding any names in `ignore`"""
+    ignore = ignore or []
     database_file_paths = []
     for file in os.listdir(database_directory):
-        if file.endswith(".dat") and not ignore:
-            database_file_paths.append(os.path.join(database_directory, file))
+        if file.endswith(".dat"):
+            if file not in ignore:
+                database_file_paths.append(os.path.join(database_directory, file))
         elif file.endswith(".txt"):
             warnings.warn(
                 f"File {file} is not a database file and will be ignored", UserWarning
