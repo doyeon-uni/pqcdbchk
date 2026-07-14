@@ -24,7 +24,9 @@ build-backend = "uv_build"
 dev = [
     "ipykernel>=7.3.0",
     "pytest>=9.1.1",
+    "pytest-cov>=7.1.0",
+    "pytest-xdist>=3.8.0",
 ]
 
 [tool.pytest.ini_options]
-addopts = "-v -n auto --doctest-modules --cov=matched --cov-report=html --cov-report=term tests/"
+addopts = "-v -n auto --doctest-modules --cov=pqcdbchk --cov-report=html --cov-report=term tests/"
