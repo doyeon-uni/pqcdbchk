@@ -22,19 +22,16 @@ Together, these tools allow you to:
 
 ### 1. Environment setup
 
-An environment configuration is provided in the project folder (`doyeon_env`).  
-Please install and activate this environment before running the notebook or the Python script  
-(e.g. create a virtual/conda environment and install the required packages based on `doyeon_env`).
+This project uses [`uv`](https://docs.astral.sh/uv/) to manage its Python environment and dependencies, as defined in `pyproject.toml`.
 
 #### How to install and activate the environment
-1. Download the github repository
-2. Download 'miniconda' or 'conda' from anaconda official website - make sure you click on 'Add conda to PATH' while installing the conda
-3. Open the terminal such as powershell or cmd (or if you have a virtual environment like VS Code, you can use the terminal in the environment)
-4. Type in 'cd [your path to the downloaded repository folder' and press enter
-5. Type in 'dir' and make sure you see 'doyeon_env.yml' file in the list of files that pops up; If not, your path is incorrect - redo step 4
-6. Type in 'conda env create -f doyeon_env.yml'
-7. Type in 'conda activate doyeon_env'
-8. If activated, the text (doyeon_env) will pop up in front of your terminal commandline
+1. Install `uv` if you don't already have it, following the [official installation guide](https://docs.astral.sh/uv/getting-started/installation/)
+2. Download or clone this github repository
+3. Open a terminal (e.g. the terminal in VS Code) and `cd` into the downloaded repository folder
+4. Type in `dir` (Windows) or `ls` (macOS/Linux) and make sure you see `pyproject.toml` in the list of files that pops up; if not, your path is incorrect - redo step 3
+5. Type in `uv sync` - this creates a local virtual environment (`.venv`) and installs all the required dependencies
+6. To run any command inside this environment, prefix it with `uv run`, e.g. `uv run jupyter lab`
+   - alternatively, activate the environment directly with `source .venv/bin/activate` (macOS/Linux) or `.venv\Scripts\activate` (Windows), after which you no longer need the `uv run` prefix
 
 > **Note:** PHREEQC itself is **not** included in this repository.  
 > You need to have PHREEQC installed separately if you plan to use the modified databases in your own simulations.
@@ -43,9 +40,9 @@ Please install and activate this environment before running the notebook or the 
 
 ### 2. Jupyter notebook: `PHREEQCsearcher.ipynb`
 
-1. Open the notebook in Jupyter (e.g. VS Code) using the installed environment.
-   - if you are using not using a viritual environment, simply type in 'conda install notebook', then `jupyter notebook PHREEQCsearcher.ipynb`  
-  (or 'conda install jupyterlab', then `jupyter lab PHREEQCsearcher.ipynb` if you prefer JupyterLab)
+1. Open the notebook, located at `src/pqcdbchk/PHREEQCsearcher.ipynb`, in Jupyter (e.g. VS Code) using the installed environment.
+   - if you are not opening it through an editor such as VS Code, run `uv run jupyter notebook src/pqcdbchk/PHREEQCsearcher.ipynb`  
+  (or `uv run jupyter lab src/pqcdbchk/PHREEQCsearcher.ipynb` if you prefer JupyterLab)
 2. Follow the instructions in each cell in order:
    - load one or more PHREEQC database files (`*.dat`),
    - select which species/phases to extract or search,
@@ -61,9 +58,8 @@ Each cell includes comments explaining what it does and which parameters you may
 
 ### 3. GUI program: `PHREEQC_databasehelper.py`
 
-1. Place all PHREEQC database files you want to analyze (files ending in `.dat`) into the `build_database` folder inside the project directory.
-2. Open `PHREEQC_databasehelper.py` in your preferred Python environment and run the script in your virtual environment.
-   - if you are not using a virtual environment, simply type in 'python PHREEQC_databsehelper.py' into your terminal after activating the environment
+1. Place all PHREEQC database files you want to analyze (files ending in `.dat`) into the `src/pqcdbchk/build_database/databases` folder inside the project directory.
+2. Run the script with `uv run python -m pqcdbchk.PHREEQC_databasehelper` from the project root (or, if you activated the environment directly, `python -m pqcdbchk.PHREEQC_databasehelper`).
 3. A graphical user interface (GUI) window will appear. From this GUI, you can:
    - search for species, reactions, or phases by name or keyword, either by exact match or partial match
    - export the search results to an Excel file (You can specifically select the results you want to export. To select multiple rows, click Ctrl key       and click all the desired results. - if you don't, the program will ask you if you want to export all the data in the search result)
