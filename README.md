@@ -40,9 +40,9 @@ This project uses [`uv`](https://docs.astral.sh/uv/) to manage its Python enviro
 
 ### 2. Jupyter notebook: `PHREEQCsearcher.ipynb`
 
-1. Open the notebook, located at `src/pqcdbchk/PHREEQCsearcher.ipynb`, in Jupyter (e.g. VS Code) using the installed environment.
-   - if you are not opening it through an editor such as VS Code, run `uv run jupyter notebook src/pqcdbchk/PHREEQCsearcher.ipynb`  
-  (or `uv run jupyter lab src/pqcdbchk/PHREEQCsearcher.ipynb` if you prefer JupyterLab)
+1. Open the notebook, located at `docs/PHREEQCsearcher.ipynb`, in Jupyter (e.g. VS Code) using the installed environment.
+   - if you are not opening it through an editor such as VS Code, run `uv run jupyter notebook docs/PHREEQCsearcher.ipynb`  
+  (or `uv run jupyter lab docs/PHREEQCsearcher.ipynb` if you prefer JupyterLab)
 2. Follow the instructions in each cell in order:
    - load one or more PHREEQC database files (`*.dat`),
    - select which species/phases to extract or search,

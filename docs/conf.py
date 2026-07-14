@@ -12,11 +12,13 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
     "sphinx.ext.autosummary",
-    "myst_parser",
+    "myst_nb",
 ]
 
 napoleon_google_docstring = True
 napoleon_numpy_docstring = True
+
+nb_execution_mode = "off"
 
 autosummary_generate = True
 autodoc_default_options = {
