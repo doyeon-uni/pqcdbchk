@@ -3,18 +3,28 @@ name = "pqcdbchk"
 version = "0.1.0"
 description = "A Jupyter notebook and Python-based tool for exporting, searching, and editing PHREEQC databases"
 readme = "README.md"
+authors = [
+    { name = "name", email = "email" }
+]
 requires-python = ">=3.13"
 dependencies = [
-    "click>=8.3.3",
-    "matplotlib>=3.10.9",
-    "numpy>=2.4.4",
+    "click>=8.4.2",
+    "matplotlib>=3.11.0",
+    "numpy>=2.5.1",
     "openpyxl>=3.1.5",
-    "pandas>=3.0.2",
+    "pandas>=3.0.3",
     "seaborn>=0.13.2",
 ]
+
+[build-system]
+requires = ["uv_build>=0.11.28,<0.12.0"]
+build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
     "ipykernel>=7.3.0",
-    "pytest-cov>=7.1.0",
+    "pytest>=9.1.1",
 ]
+
+[tool.pytest.ini_options]
+addopts = "-v -n auto --doctest-modules --cov=matched --cov-report=html --cov-report=term tests/"
