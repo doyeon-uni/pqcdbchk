@@ -1,6 +1,5 @@
 # PHREEQC_database helper
 import tkinter as tk
-import os
 import re
 import pandas as pd
 from tkinter import ttk
@@ -9,6 +8,7 @@ from tkinter import messagebox
 from tkinter.messagebox import showinfo
 from .build_database import clean_tables as ct
 from .build_database import utils as ut
+from . import database_editor as de
 import importlib.resources as pkg_resources
 
 def load_tables():
@@ -352,33 +352,6 @@ class EditDatabasePage(tk.Frame):
             entry.delete(0, tk.END)
             entry.insert(0, filename)
 
-    # insert the added values into the section
-    def insert_into_section(self, lines, section_name, new_entry):
-        start = None
-        pattern = re.compile(rf'^\s*{re.escape(section_name)}\s*$', re.IGNORECASE)
-        for i, line in enumerate(lines):
-            if pattern.match(line):
-                start = i
-                break
-        if start is None:
-            raise ValueError(f"Section {section_name} not found.")
-        end = None
-        for i in range(start + 1, len(lines)):
-            s = lines[i].strip()
-            if not s:
-                continue
-            if re.match(r'^[A-Z][A-Z _]*[A-Z]$', s):
-                end = i
-                break
-        if end is None:
-            end = len(lines)
-        new_lines = new_entry.splitlines(keepends=True)
-        for j, nl in enumerate(new_lines):
-            if not nl.endswith('\n'):
-                new_lines[j] = nl + '\n'
-        lines[end:end] = new_lines
-        return lines
-        
     # save new database file
     def browse_save(self, entry):
         filename = fd.asksaveasfilename(defaultextension=".dat")
@@ -386,41 +359,9 @@ class EditDatabasePage(tk.Frame):
             entry.delete(0, tk.END)
             entry.insert(0, filename)
 
-    # load database file based on its path
-    def load_database(self, path):
-        if not os.path.exists(path):
-            return []
-        with open(path, 'r') as f:
-            return f.readlines()
-
-    # write the new database
-    def save_database(self, lines, path):
-        with open(path, 'w') as f:
-            f.writelines(lines)
-    
-    # normalize the equation(add spaces on either side of '=')
-    def normalize_equation(self, s: str) -> str:
-        if s is None:
-            return ""
-        s = s.strip()
-        s = re.sub(r'\s*=\s*', ' = ', s)
-        s = re.sub(r'\s+', ' ', s)
-        return s
-
-    # find and verify if the species already exists in the database
-    def find_species(self, lines, species_eq):
-        target = self.normalize_equation(species_eq)
-        if not target:
-            return -1
-    
-        for i, line in enumerate(lines):
-            if self.normalize_equation(line) == target:
-                return i
-        return -1
-
     # add user input values to species
     def add_species(self):
-        eq = self.normalize_equation(self.entry_eq.get().strip())
+        eq = de.normalize_equation(self.entry_eq.get().strip())
         logk = self.entry_logk.get().strip()
         dh = self.entry_dh.get().strip()
         db_path = self.entry_db.get().strip()
@@ -430,8 +371,8 @@ class EditDatabasePage(tk.Frame):
             messagebox.showwarning("Error", "Check the file location again.")
             return
 
-        lines = self.load_database(db_path)
-        index = self.find_species(lines, eq)
+        lines = de.load_database(db_path)
+        index = de.find_species(lines, eq)
 
         new_entry = (
         f"    {eq}\n"
@@ -459,18 +400,10 @@ class EditDatabasePage(tk.Frame):
             else:
                 return
         else:
-            self.insert_into_section(lines, "SOLUTION_SPECIES", new_entry)
+            de.insert_into_section(lines, "SOLUTION_SPECIES", new_entry)
             messagebox.showinfo("Added", f"{eq} is now added.")
 
-        self.save_database(lines, new_path)
-
-    # find and verify if the solution master species already exists in the database
-    def find_master_species_line(self, lines, element_name):
-        pattern = re.compile(rf'^\s*{re.escape(element_name)}\s+')
-        for i, line in enumerate(lines):
-            if pattern.match(line):
-                return i
-        return -1
+        de.save_database(lines, new_path)
 
     # add user input values to solution master species
     def add_master_species(self):
@@ -485,8 +418,8 @@ class EditDatabasePage(tk.Frame):
             messagebox.showwarning("Error", "Check the file location again.")
             return
 
-        lines = self.load_database(db_path)
-        index = self.find_master_species_line(lines, element)
+        lines = de.load_database(db_path)
+        index = de.find_master_species_line(lines, element)
 
         new_line = f"{element}    {species}    {alk}    {gfw}\n"
 
@@ -501,23 +434,15 @@ class EditDatabasePage(tk.Frame):
             else:
                 return
         else:
-            self.insert_into_section(lines, "SOLUTION_MASTER_SPECIES", new_line)
+            de.insert_into_section(lines, "SOLUTION_MASTER_SPECIES", new_line)
             messagebox.showinfo("Added", f"{element} master species is now added.")
 
-        self.save_database(lines, new_path)
+        de.save_database(lines, new_path)
 
-    # find and verify if the phase already exists in the database
-    def find_phase_line(self, lines, phase_name):
-        pattern = re.compile(rf'^\s*{re.escape(phase_name)}\s*$')
-        for i, line in enumerate(lines):
-            if pattern.match(line):
-                return i
-        return -1
-    
-    # add user input to phase block 
+    # add user input to phase block
     def add_phase(self):
         name = self.entry_phase_name.get().strip()
-        eq = self.normalize_equation(self.entry_phase_eq.get().strip())
+        eq = de.normalize_equation(self.entry_phase_eq.get().strip())
         logk = self.entry_phase_logk.get().strip()
         dh = self.entry_phase_dh.get().strip()
         db_path = self.entry_db.get().strip()
@@ -527,8 +452,8 @@ class EditDatabasePage(tk.Frame):
             messagebox.showwarning("Error", "Check the file location again.")
             return
 
-        lines = self.load_database(db_path)
-        index = self.find_phase_line(lines, name)
+        lines = de.load_database(db_path)
+        index = de.find_phase_line(lines, name)
 
         new_entry = (
         f"{name}\n"
@@ -553,10 +478,10 @@ class EditDatabasePage(tk.Frame):
             else:
                 return
         else:
-            self.insert_into_section(lines, "PHASES", new_entry)
+            de.insert_into_section(lines, "PHASES", new_entry)
             messagebox.showinfo("Added", f"{name} phase is now added.")
 
-        self.save_database(lines, new_path)
+        de.save_database(lines, new_path)
 
 
 
