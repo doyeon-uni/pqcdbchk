@@ -1,6 +1,3 @@
-import pandas as pd
-
-from pqcdbchk.PHREEQC_databasehelper import DatabaseSearcher
 from pqcdbchk.database_editor import (
     find_master_species_line,
     find_phase_line,
@@ -10,25 +7,7 @@ from pqcdbchk.database_editor import (
 )
 
 
-def test_search_functionality():
-    ss_df = pd.DataFrame({'equation': ['H2O = H+ + OH-', 'NaCl = Na+ + Cl-']})
-    sms_df = pd.DataFrame({'species': ['H+', 'Na+']})
-    phase_df = pd.DataFrame({'phase_name': ['Calcite', 'Halite']})
-
-    searcher = DatabaseSearcher(ss_df, sms_df, phase_df)
-
-    result = searcher.search("equation", "H2O")
-    assert not result.empty
-    assert "H2O" in result.iloc[0]['equation']
-
-    exact_result = searcher.search("phase", "Calcite", exact=True)
-    assert len(exact_result) == 1
-
-    exact_fail = searcher.search("phase", "Calc", exact=True)
-    assert exact_fail.empty
-
-    empty_result = searcher.search("species", "NonExistent")
-    assert empty_result.empty
+# DatabaseSearcher behavior is covered by tests/test_database_searcher.py
 
 
 def test_normalize_equation():

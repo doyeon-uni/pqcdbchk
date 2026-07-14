@@ -75,8 +75,7 @@ def write_sp(row: pd.Series, file) -> None:
                 file.write(f"\t# source\t{value}\n")
 
 
-# PHASES block not currently implemented
-def write_phase(row, file):  # pragma: no cover
+def write_phase(row, file):
     """
     Writes PHASES information to file.
 
