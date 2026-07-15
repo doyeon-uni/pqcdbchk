@@ -73,9 +73,7 @@ def plot_source_hist(
     None
     """
     if ax is None:
-        fig, ax = plt.subplots()
-    else:
-        fig = ax.figure  # Get the figure from the existing axes
+        _, ax = plt.subplots()
 
     sns.histplot(data=df, x="source", ax=ax, color=color, label=label, alpha=0.7)
     ax.set_xlabel("Source")

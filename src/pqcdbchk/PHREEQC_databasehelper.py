@@ -71,12 +71,12 @@ class DatabaseSearcher:
 
 # Sort the results numerically and alphabetically
 def treeview_sort_column(tree, col, reverse):
-    l = [(tree.set(k, col), k) for k in tree.get_children("")]
+    items = [(tree.set(k, col), k) for k in tree.get_children("")]
     try:
-        l.sort(key=lambda t: float(t[0]), reverse=reverse)
+        items.sort(key=lambda t: float(t[0]), reverse=reverse)
     except ValueError:
-        l.sort(reverse=reverse)
-    for index, (val, k) in enumerate(l):
+        items.sort(reverse=reverse)
+    for index, (val, k) in enumerate(items):
         tree.move(k, "", index)
     tree.heading(col, command=lambda: treeview_sort_column(tree, col, not reverse))
 

@@ -30,3 +30,6 @@ jobs:
 
       - name: Run tests
         run: xvfb-run -a uv run pytest
+
+      - name: Run notebook tests
+        run: xvfb-run -a uv run pytest --nbval-lax -o addopts="" docs/
